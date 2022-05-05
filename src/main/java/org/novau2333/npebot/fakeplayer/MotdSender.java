@@ -52,8 +52,7 @@ public class MotdSender {
                    str = str.replaceAll("\u0000", "");
                    //替换掉�j�j
                    str = str.replaceAll("�j�j", "");
-                   JSONObject jsonObject = JSONObject.parseObject(str);
-                   LOGGER.info(jsonObject);
+                   LOGGER.info(str);
                    try {
                        out.close();
                        socket.close();
