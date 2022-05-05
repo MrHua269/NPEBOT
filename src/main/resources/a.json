@@ -1,0 +1,83 @@
+{
+  "1": {
+    "id": "1",
+    "owner": "kv5566s",
+    "name": "1",
+    "iconMaterial": "GRASS_BLOCK",
+    "location": "1.5664974791530097,62.0,-0.4750661534432106,25.650051,-19.350067,world_the_end",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "die": {
+    "id": "die",
+    "owner": "kv5566s",
+    "name": "die",
+    "iconMaterial": "STONE",
+    "location": "294.30000001192093,39.0,-807.3000000119209,64.499985,173.08337,world",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "cunzhuang": {
+    "id": "cunzhuang",
+    "owner": "kv5566s",
+    "name": "cunzhuang",
+    "iconMaterial": "DIRT",
+    "location": "274.14956765232733,120.0,1162.699999988079,44.954933,95.47861,world",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "2": {
+    "id": "2",
+    "owner": "kv5566s",
+    "name": "2",
+    "iconMaterial": "END_STONE",
+    "location": "-1142.799951683425,64.0,443.4120930738728,20.249983,-70.82666,world_the_end",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "3": {
+    "id": "3",
+    "owner": "kv5566s",
+    "name": "3",
+    "iconMaterial": "PURPUR_BLOCK",
+    "location": "-1500.699999988079,89.0,998.6999999880791,49.50001,138.74088,world_the_end",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "modi": {
+    "id": "modi",
+    "owner": "kv5566s",
+    "name": "modi",
+    "iconMaterial": "BLACKSTONE",
+    "location": "94.41454153602834,57.0,-1.7353494951656359,18.450043,93.45006,world_the_end",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "9": {
+    "id": "9",
+    "owner": "kv5566s",
+    "name": "9",
+    "iconMaterial": "GRASS_BLOCK",
+    "location": "-269.89479878203446,76.0,29.599820272791327,53.399986,30.220821,world",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "kuang": {
+    "id": "kuang",
+    "owner": "kv5566s",
+    "name": "kuang",
+    "iconMaterial": "STONE",
+    "location": "274.69999998807907,52.0,1165.300000011921,-59.550064,15.528506,world",
+    "invitedPlayers": [],
+    "isRespawnPoint": false
+  },
+  "home": {
+    "id": "home",
+    "owner": "kv5566s",
+    "name": "home",
+    "iconMaterial": "SUNFLOWER",
+    "location": "121.10489674346888,64.0,-838.182887898344,32.550045,-171.44629,world",
+    "invitedPlayers": [],
+    "isRespawnPoint": true
+  }
+}
