@@ -37,7 +37,7 @@ public class MotdSender {
                Socket socket = new Socket();
                socket.connect(address);
                if(socket.isConnected()) {
-                   LOGGER.info("Connected to " + address.getHostName() + ":" + address.getPort());
+                   LOGGER.info("[BotPinger]Connected to " + address.getHostName() + ":" + address.getPort());
                    OutputStream out = socket.getOutputStream();
                    out.write(new byte[]{0x07, 0x00, 0x05, 0x01, 0x30, 0x63, (byte) 0xDD, 0x01});
                    out.flush();
@@ -52,7 +52,7 @@ public class MotdSender {
                    str = str.replaceAll("\u0000", "");
                    //替换掉�j�j
                    str = str.replaceAll("�j�j", "");
-                   LOGGER.info(str);
+                   LOGGER.info("[BotPinger]Server response:"+str);
                    try {
                        out.close();
                        socket.close();
@@ -68,10 +68,4 @@ public class MotdSender {
        }
        runnable.run();
     }
-
-    public static void main(String[] args) {
-        send(new InetSocketAddress("124.221.233.18",25565),false);
-    }
-
-
 }
