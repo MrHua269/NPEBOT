@@ -26,15 +26,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class MotdSender {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static void send(@NotNull InetSocketAddress address,boolean offMain){
+    public static void send(@NotNull InetSocketAddress address, boolean offMain, Proxy proxy,boolean enableProxy) {
        Runnable runnable = () -> {
            try {
-               Socket socket = new Socket();
+               Socket socket;
+               if (enableProxy && proxy != null) {
+                   socket = new Socket(proxy);
+               } else {
+                   socket = new Socket();
+               }
                socket.connect(address);
                if(socket.isConnected()) {
                    LOGGER.info("[BotPinger]Connected to " + address.getHostName() + ":" + address.getPort());

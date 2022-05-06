@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCh
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
+import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.*;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -30,11 +31,18 @@ public class FakePlayerFactory {
     public static final ConcurrentMap<Session, WorldInfo> sessionInfo = new ConcurrentHashMap<>();
     public static Queue<String> messageTask = new ConcurrentLinkedQueue<>();
     private static final ConcurrentMap<Session,Thread> autoRespawners = new ConcurrentHashMap<>();
-    public static TcpClientSession getNewSession(InetSocketAddress address,String userName,String accessToken){
+    public static TcpClientSession getNewSession(InetSocketAddress address, String userName, String accessToken, ProxyInfo proxy,boolean enableProxy){
+        if (enableProxy && proxy == null) {
+            throw new NullPointerException("Proxy cannot be null!");
+        }
         TcpClientSession session;
-        if (accessToken != null) {
+        if (accessToken != null && enableProxy) {
+            session = new TcpClientSession(address.getHostName(),address.getPort(),new MinecraftProtocol(new GameProfile((String) null,userName),accessToken),proxy);
+        } else if (accessToken != null && !enableProxy) {
             session = new TcpClientSession(address.getHostName(),address.getPort(),new MinecraftProtocol(new GameProfile((String) null,userName),accessToken));
-        } else {
+        }else if (accessToken == null && enableProxy) {
+            session = new TcpClientSession(address.getHostName(),address.getPort(),new MinecraftProtocol(userName),proxy);
+        }else{
             session = new TcpClientSession(address.getHostName(),address.getPort(),new MinecraftProtocol(userName));
         }
         session.setReadTimeout(3000);

@@ -2,12 +2,16 @@ package main.java.org.novau2333.npebot.fakeplayer;
 
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
+import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import main.java.org.novau2333.npebot.ProxyPool;
 import org.apache.logging.log4j.Logger;
 import org.novau2333.npebot.fakeplayer.FakePlayerFactory;
 
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.novau2333.npebot.fakeplayer.FakePlayerFactory.getNewSession;
@@ -67,38 +71,48 @@ public class BotWarpper {
             System.exit(0);
         }
     }
-    public static void runNewBot(InetSocketAddress address, String username, String accessToken){
+    public static void runNewBot(InetSocketAddress address, String username, String accessToken,boolean enableProxty){
         AtomicReference<TcpClientSession> session = new AtomicReference<>();
         new Thread(() -> {
             while (true){
-                try {
-                    session.set(getNewSession(address, username, accessToken));
-                    session.get().connect();
-                    new Thread(()->{
-                        Scanner scanner = new Scanner(System.in);
-                        while (scanner.hasNextLine()){
-                            String input = scanner.nextLine();
-                            handleCommand(input,session);
-                            if (isCommand( input)){
-                                continue;
-                            }
-                            session.get().send(new ServerboundChatPacket(input));
+                ProxyPool.proxys.forEach(p -> {
+                    try {
+                        String[] _p = p.split(":");
+                        ProxyInfo proxy = new ProxyInfo(ProxyInfo.Type.HTTP, new InetSocketAddress(_p[0], Integer.parseInt(_p[1])));
+                        Proxy p1 = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(_p[0], Integer.parseInt(_p[1])));
+                        session.set(getNewSession(address, username, accessToken,proxy,enableProxty));
+                        try {
+                            MotdSender.send(address, true, p1, enableProxty);
+                        } catch (Exception e) {
+                            logger.error("[MCChatBot] Failed to send motd");
                         }
-                    },"Command-Handler").start();
-                    Thread.sleep(10000);
-                    while (session.get().isConnected())
-                    {
-                        Thread.sleep(10);
+                        session.get().connect();
+                        new Thread(()->{
+                            Scanner scanner = new Scanner(System.in);
+                            while (scanner.hasNextLine()){
+                                String input = scanner.nextLine();
+                                handleCommand(input,session);
+                                if (isCommand( input)){
+                                    continue;
+                                }
+                                session.get().send(new ServerboundChatPacket(input));
+                            }
+                        },"Command-Handler").start();
+                        Thread.sleep(10000);
+                        while (session.get().isConnected())
+                        {
+                            Thread.sleep(10);
+                        }
+                        if(!org.novau2333.npebot.ConfigManager.fakePlayerConfig.getBoolean("autoreconnect")){
+                            session.get().disconnect("Bot disconnected");
+                            logger.info("[MCChatBot] Exiting...");
+                            System.exit(0);
+                        }
+                        logger.info("[MCChatBot] Reconnecting");
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                    if(!org.novau2333.npebot.ConfigManager.fakePlayerConfig.getBoolean("autoreconnect")){
-                        session.get().disconnect("Bot disconnected");
-                        logger.info("[MCChatBot] Exiting...");
-                        break;
-                    }
-                    logger.info("[MCChatBot] Reconnecting");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                });
             }
         },"MCChatBot-Thread").start();
     }

@@ -23,6 +23,10 @@ public class ConfigManager {
             fakePlayerConfig.put("password", "123456AABB");
             fakePlayerConfig.put("autoreconnect",true);
             fakePlayerConfig.put("accessToken","nope");
+            fakePlayerConfig.put("enableProxy",false);
+            fakePlayerConfig.put("howToGetProxy","both");
+            fakePlayerConfig.put("runProxyAutoUpdate",true);
+            fakePlayerConfig.put("proxyUpdateInterval",10);
             consoleWriter.execute(()->{
                 logger.info("Writing default config file...");
                 try {
