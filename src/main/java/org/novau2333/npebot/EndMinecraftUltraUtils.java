@@ -1,4 +1,4 @@
-package main.java.org.novau2333.npebot;
+package org.novau2333.npebot;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +15,14 @@ public class EndMinecraftUltraUtils {
 
     public static Matcher matches(String str, String regex) {
         Pattern mPattern=Pattern.compile(regex);
-        Matcher mMatcher=mPattern.matcher(str);
-        return mMatcher;
+        return mPattern.matcher(str);
     }
 
     public static String sendGet(String url) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         BufferedReader in = null;
         try {
-            String urlNameString = url;
-            URL realUrl = new URL(urlNameString);
+            URL realUrl = new URL(url);
             URLConnection connection = realUrl.openConnection();
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
@@ -34,10 +32,10 @@ public class EndMinecraftUltraUtils {
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
         } catch (Exception e) {
-            logger.error("HTTP","HTTP请求失败: ",e);
+            logger.error("HTTP请求失败: ",e);
         }
         finally {
             try {
@@ -48,7 +46,7 @@ public class EndMinecraftUltraUtils {
                 logger.error("IO异常: ",e);
             }
         }
-        return result;
+        return result.toString();
     }
 
 }

@@ -1,4 +1,4 @@
-package main.java.org.novau2333.npebot.fakeplayer;
+package org.novau2333.npebot.fakeplayer;
 
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;

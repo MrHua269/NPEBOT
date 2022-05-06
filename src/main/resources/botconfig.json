@@ -1,0 +1,14 @@
+{
+  "server":"124.221.233.18",
+  "password":"123456AABB",
+  "port":25565,
+  "enableProxy":false,
+  "id":"jlnpebot001",
+  "autoreconnect":true,
+  "accessToken":"nope",
+  "runProxyAutoUpdate":true,
+  "authmemode":true,
+  "howToGetProxy":"both",
+  "proxyUpdateInterval":10,
+  "executeCommandWhenJoined": ["say YEEEEEE","say awa"]
+}

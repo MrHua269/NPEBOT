@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static org.apache.logging.log4j.core.util.Loader.getClassLoader;
+
 public class ConfigManager {
     private static final Executor consoleWriter = Executors.newCachedThreadPool();
     public static JSONObject fakePlayerConfig;
@@ -15,18 +17,14 @@ public class ConfigManager {
     public static void init() throws IOException {
         File file = new File("botconfig.json");
         if(!file.exists()){
-            fakePlayerConfig = new JSONObject();
-            fakePlayerConfig.put("id", "jlnpebot001");
-            fakePlayerConfig.put("server", "124.221.233.18");
-            fakePlayerConfig.put("port", 25565);
-            fakePlayerConfig.put("authmemode", true);
-            fakePlayerConfig.put("password", "123456AABB");
-            fakePlayerConfig.put("autoreconnect",true);
-            fakePlayerConfig.put("accessToken","nope");
-            fakePlayerConfig.put("enableProxy",false);
-            fakePlayerConfig.put("howToGetProxy","both");
-            fakePlayerConfig.put("runProxyAutoUpdate",true);
-            fakePlayerConfig.put("proxyUpdateInterval",10);
+            logger.error("Config file didn't found.Using internal config and creating...");
+            InputStream stream =  ConfigManager.class.getClassLoader().getResourceAsStream("botconfig.json");
+            byte[] buffer = new byte[stream.available()];
+            stream.read(buffer);
+            //load default config
+            fakePlayerConfig = JSONObject.parseObject(new String(buffer));
+            stream.close();
+            file.createNewFile();
             consoleWriter.execute(()->{
                 logger.info("Writing default config file...");
                 try {

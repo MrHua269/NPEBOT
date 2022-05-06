@@ -1,5 +1,6 @@
 package org.novau2333.npebot.fakeplayer;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
@@ -12,9 +13,8 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.*;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
-import main.java.org.novau2333.npebot.fakeplayer.WorldInfo;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,9 +28,10 @@ public class FakePlayerFactory {
     private static final Logger logger = LogManager.getLogger();
     public static boolean loginPluginEnabled = true;
     public static String password;
+    public static JSONArray whenLoginToExecute;
     public static final ConcurrentMap<Session, WorldInfo> sessionInfo = new ConcurrentHashMap<>();
     public static Queue<String> messageTask = new ConcurrentLinkedQueue<>();
-    private static final ConcurrentMap<Session,Thread> autoRespawners = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Session,Thread> autoRespawns = new ConcurrentHashMap<>();
     public static TcpClientSession getNewSession(InetSocketAddress address, String userName, String accessToken, ProxyInfo proxy,boolean enableProxy){
         if (enableProxy && proxy == null) {
             throw new NullPointerException("Proxy cannot be null!");
@@ -54,14 +55,14 @@ public class FakePlayerFactory {
                 if(packet instanceof ClientboundChatPacket){
                     ClientboundChatPacket chatPacket = (ClientboundChatPacket) packet;
                     Component message = chatPacket.getMessage();
-                    String textComponent = LegacyComponentSerializer.legacySection().serialize(message);
+                    String textComponent = GsonComponentSerializer.gson().serialize(message);
                     logger.info("[PacketListener][ChatPacket] {}",textComponent);
                 }
                 if (packet instanceof ClientboundLoginPacket){
                     logger.info("[MCChatBot] Logged in as entityId {}",((ClientboundLoginPacket) packet).getEntityId());
                     ClientboundLoginPacket loginPacket = (ClientboundLoginPacket) packet;
                     sessionInfo.put(session,new WorldInfo(loginPacket));
-                    session.setFlag("loggedin",true);
+                    session.setFlag("logged",true);
                     Thread autoRespawner = new Thread(()->{
                         while (session.isConnected()){
                             try {
@@ -78,7 +79,7 @@ public class FakePlayerFactory {
                     },"AutoRespawner-"+Thread.currentThread().getId());
                     autoRespawner.setDaemon(true);
                     autoRespawner.start();
-                    autoRespawners.put(session,autoRespawner);
+                    autoRespawns.put(session,autoRespawner);
                     botHandler.handleAuthmePlugin(session);
                 }
             }
@@ -103,11 +104,11 @@ public class FakePlayerFactory {
     private static final class BotHandler{
         public void handleDisconnect(DisconnectedEvent event){
             logger.info("[MCChatBot] Disconnected from server.Reason: {}",event.getReason());
-            if (autoRespawners.get(event.getSession()).isAlive()){
-                autoRespawners.get(event.getSession()).stop();
+            if (autoRespawns.get(event.getSession()).isAlive()){
+                autoRespawns.get(event.getSession()).stop();
             }
-            autoRespawners.remove(event.getSession());
-            event.getSession().setFlag("loggedin",false);
+            autoRespawns.remove(event.getSession());
+            event.getSession().setFlag("logged",false);
         }
 
         public void handleAuthmePlugin(Session session){
@@ -120,6 +121,9 @@ public class FakePlayerFactory {
                 //Register the fake player
                 session.send(new ServerboundChatPacket("/register "+password+" "+password));
                 session.send(new ServerboundChatPacket("/l "+password));
+            }
+            for (Object message : whenLoginToExecute){
+                session.send(new ServerboundChatPacket("/"+message));
             }
         }
     }
