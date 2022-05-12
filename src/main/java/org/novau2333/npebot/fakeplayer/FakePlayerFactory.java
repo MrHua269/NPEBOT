@@ -1,6 +1,8 @@
 package org.novau2333.npebot.fakeplayer;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
@@ -56,7 +58,8 @@ public class FakePlayerFactory {
                     ClientboundChatPacket chatPacket = (ClientboundChatPacket) packet;
                     Component message = chatPacket.getMessage();
                     String textComponent = GsonComponentSerializer.gson().serialize(message);
-                    logger.info("[PacketListener][ChatPacket] {}",textComponent);
+                    JSONObject jsonObject = JSON.parseObject(textComponent);
+                    logger.info("[PacketListener][ChatPacket] {}",jsonObject.toString());
                 }
                 if (packet instanceof ClientboundLoginPacket){
                     logger.info("[MCChatBot] Logged in as entityId {}",((ClientboundLoginPacket) packet).getEntityId());
@@ -104,6 +107,9 @@ public class FakePlayerFactory {
     private static final class BotHandler{
         public void handleDisconnect(DisconnectedEvent event){
             logger.info("[MCChatBot] Disconnected from server.Reason: {}",event.getReason());
+            if (event.getCause()!=null){
+                event.getCause().printStackTrace();
+            }
             if (autoRespawns.get(event.getSession()).isAlive()){
                 autoRespawns.get(event.getSession()).stop();
             }
