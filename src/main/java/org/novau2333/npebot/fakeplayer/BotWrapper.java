@@ -2,6 +2,7 @@ package org.novau2333.npebot.fakeplayer;
 
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.novau2333.npebot.fakeplayer.FakePlayerFactory.getNewSession;
 
+//TODO finish the chat signer
 public class BotWrapper {
     private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger();
     private static final String[] commands = new String[8];
@@ -68,8 +70,11 @@ public class BotWrapper {
             System.exit(0);
         }
     }
+
+    public static String accessToken1;
     public static void runNewBot(InetSocketAddress address, String username, String accessToken,boolean enableProxty){
         AtomicReference<TcpClientSession> session = new AtomicReference<>();
+        accessToken1 = accessToken;
         new Thread(()->{
             Scanner scanner = new Scanner(System.in);
             while (scanner.hasNextLine()){
@@ -79,7 +84,14 @@ public class BotWrapper {
                     if (isCommand( input)){
                         continue;
                     }
-                    session.get().send(new ServerboundChatPacket(input));
+                    if (input.startsWith("/")){
+                        /**
+                         * Un completed code block
+                         * TODO finish this
+                         */
+                        continue;
+                    }
+                    session.get().send(new ServerboundChatPacket(input,System.currentTimeMillis(),1,new byte[32],false));
                 };
             }
         },"Command-Handler").start();

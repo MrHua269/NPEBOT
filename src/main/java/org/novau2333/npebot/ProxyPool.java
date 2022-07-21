@@ -10,15 +10,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 
-public class ProxyPool {
+public class
+ProxyPool {
     public static final Set<String> proxy = ConcurrentHashMap.newKeySet();
     private static final Logger logger = LogManager.getLogger();
 
     public static void getProxyFromAPIIs() {
-        logger.info("正在使用API获取代理..");
+        logger.info("Getting proxies..");
         getProxyFromAPI("http://www.66ip.cn/mo.php?tqsl=9999");
         getProxyFromAPI("http://www.89ip.cn/tqdl.html?api=1&num=9999");
-        logger.info("代理更新完成!数量:"+ proxy.size());
+        logger.info("Finished!Proxy count:{}",proxy.size());
     }
 
     public static void getProxyFromAPI(String url) {
@@ -26,9 +27,7 @@ public class ProxyPool {
         Matcher matcher = EndMinecraftUltraUtils.matches(ips, "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\:\\d{1,5}");
         while (matcher.find()) {
             String ip = matcher.group();
-            if (!proxy.contains(ip)) {
-                proxy.add(ip);
-            }
+            proxy.add(ip);
         }
     }
 
